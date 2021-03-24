@@ -1,0 +1,95 @@
+﻿@model LMSBL.DBModels.tblCourse
+@{
+    ViewBag.Title = "New Course";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+
+    LMSBL.DBModels.TblUser objUser = new LMSBL.DBModels.TblUser();
+    objUser = (LMSBL.DBModels.TblUser)Session["UserSession"];
+    var baseURL = System.Configuration.ConfigurationManager.AppSettings["CourseBaseURL"];
+}
+
+@using (Html.BeginForm("AddCourse", "Courses", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="container-fluid mt-4 mb-4 pl-4 pr-4">
+        @if (!string.IsNullOrEmpty(Convert.ToString(TempData["CourseMessage"])))
+        {
+            <script>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Saved',
+                    text: 'Course Saved Successfully!'
+                }).then((value) => {
+                    window.location.href = "Index";
+                });
+
+            </script>
+
+        }
+        <div class="row" style="margin-bottom:25px;margin-left:275px;">
+            <div class="col">               
+                    <h4 class="title-color">Add Course</h4>
+            </div>
+        </div>
+        <div class="row justify-content-center h-100">
+            <div class="col align-self-center add-user-section list-box" >
+                <div class="row pl-4">
+                    <div class="col-sm-6">
+
+                        @Html.HiddenFor(model => model.ContentModuleId)
+                        @Html.HiddenFor(model => model.ContentModuleURL)
+                        @Html.TextBoxFor(model => model.ContentModuleName, new { @class = "input100", placeholder = "Course Name" })
+
+                        @Html.TextBoxFor(model => model.MasteryScore, "{0:#.#}", new { @class = "input100", placeholder = "Course Mastery Score" })
+                        @Html.TextBoxFor(model => model.Duration, "{0:#.#}", new { @class = "input100", placeholder = "Course Duration (Mins)" })
+
+                    </div>
+                    <div class="col-sm-6">
+                        @Html.DropDownListFor(x => Model.ContentModuleType, new SelectList(new List<Object>{
+                              new { value = "Scorm1.2" , text = "Scorm1.2"  },
+                              new { value = "Other" , text = "Other"  }
+                           }, "value", "text"), htmlAttributes: new { @class = "input100", id = "CourseTypeList" })
+                        <div>
+                            Upload Course
+                        </div>
+
+                        <input type="file" name="file" id="file" style="width: 100%;" />
+                        <br />
+                        <div id="lnkCourseFile">
+                            @if (Model != null)
+                            {
+                                if (!string.IsNullOrEmpty(Model.ContentModuleURL))
+                                {
+                                    Model.ContentModuleURL = Model.ContentModuleURL + "\\" + Model.ContentModuleId + ".zip";
+                                    <a href="@baseURL?AID=@Model.ContentModuleId&LID=@objUser.UserId" class="login" title="Launch Course" target="_blank">Test Course</a>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row pl-4" style="padding-right:20px;">
+                    Please mention Instructions for this course
+                    @Html.TextAreaFor(model => model.ContentModuleDescription, new { @class = "input100", id = "editarea" })
+                </div>
+                <br />
+                <div class="row justify-content-end pr-4">
+                    <button type="submit" id="btnCourseSubmit" class="btn btn-primary profle-submit-btn mr-4"><img src="~/assets/images/check-img.png" /> Save Changes</button>
+                    <button type="submit" onclick="location.href='@Url.Action("Index", "Courses")';return false;" class="btn btn-outline-primary cancel-btn mr-4"><i class="far fa-times-circle"></i> Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script src="~/assets/Validations.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.15/dist/summernote.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.15/dist/summernote.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#editarea').summernote();
+    });
+
+</script>

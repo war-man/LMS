@@ -1,0 +1,174 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <title>CRM</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="~/assets/images/favicon.ico" type="image/gif" sizes="16x16">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/assets/CRM/style.css">
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    @*<link rel="stylesheet" href="~/CSS/style.css" />
+        <link rel="stylesheet" href="~/CSS/bootstrap/css/bootstrap-steps.min.css" />*@
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+
+
+    <script src="~/assets/CRM/DateFormat.js"></script>
+    <script src="~/assets/SweetAlert.js"></script>
+    <style>
+        #loader {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            opacity: 1;
+            z-index: 1021;
+            background: rgba(255, 255, 255, .7);
+        }
+
+        .loader-inner {
+            width: 100px;
+            height: 100px;
+            border-radius: 100%;
+            position: relative;
+            margin: auto;
+        }
+
+            .loader-inner:before,
+            .loader-inner:after {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                border-radius: 100%;
+                border: 10px solid transparent;
+                border-top-color: darkblue;
+            }
+
+            .loader-inner:before {
+                z-index: 100;
+                animation: spinner-border 1s infinite;
+            }
+
+            .loader-inner:after {
+                border: 10px solid lightblue;
+            }
+    </style>
+</head>
+<body>
+    @{
+
+        LMSBL.DBModels.TblUser model = new LMSBL.DBModels.TblUser();
+        List<LMSBL.DBModels.CRMNew.tblCRMClient> clientModel = new List<LMSBL.DBModels.CRMNew.tblCRMClient>();
+        model = (LMSBL.DBModels.TblUser)Session["UserSession"];
+        var fullname = model.FirstName + " " + model.LastName;
+        var LMSUrl = model.TenantURL;
+        if (!string.IsNullOrEmpty(model.CRMClientId))
+        {
+
+            LMSBL.Repository.CRMRepository CEMRepo = new LMSBL.Repository.CRMRepository();
+            clientModel = CEMRepo.GetClientById(Convert.ToInt32(model.CRMClientId));
+        }
+    }
+    <div class="wrapper d-flex align-items-stretch">
+        <div id="divLoader" runat="server" style="display:none">
+            <div id="loader">
+                <div class="loader-inner"></div>
+            </div>
+        </div>
+        <nav id="sidebar">
+            <div class="custom-menu">
+                <button type="button" id="sidebarCollapse" class="btn btn-primary">
+                    <i class="fa fa-bars"></i>
+                    <span class="sr-only"></span>
+                </button>
+            </div>
+            <div class="p-4">
+                <h1><a href="#" class="logo">Welcome <span>@fullname</span></a></h1>
+                <ul class="list-unstyled components mb-5">
+                    <li class="@Html.IsSelected(controller: "CRM", action: "Index")">
+                        <a href="@Url.Action("Index", "CRM")"><span class="fa fa-home mr-3" style="color:white;"></span> Dashboard</a>
+                    </li>
+                    <li class="@Html.IsSelected(controller: "CRMUsers", action: "Enquiry,AddEnquiry")">
+                        <a href="@Url.Action("Enquiry", "CRMUsers")"><span class="fa fa-user mr-3" style="color:white;"></span> Enquiry</a>
+                    </li>
+                    <li class="@Html.IsSelected(controller: "CRMUsers", action: "PotentialClients,AddPotentialClient")">
+                        <a href="@Url.Action("PotentialClients", "CRMUsers")"><span class="fa fa-briefcase mr-3" style="color:white;"></span> Potential Clients</a>
+                    </li>
+                    <li class="@Html.IsSelected(controller: "CRMUsers", action: "Clients,AddClient")">
+                        <a href="@Url.Action("Clients", "CRMUsers")"><span class="fa fa-suitcase mr-3" style="color:white;"></span> Clients</a>
+                    </li>
+                    <li class="@Html.IsSelected(controller: "FileNotes", action: "Index")">
+                        <a href="@Url.Action("Index", "FileNotes")"><span class="fa fa-sticky-note mr-3" style="color:white;"></span> File Notes</a>
+                    </li>
+                    <li class="@Html.IsSelected(controller: "Documents", action: "Index")">
+                        <a href="@Url.Action("Index", "Documents")"><span class="fa fa-file mr-3" style="color:white;"></span> Documents</a>
+                    </li>
+                    @*<li>
+                        <a href="@Url.Action("Index", "Emails")"><span class="fa fa-cogs mr-3"></span> Emails</a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Index", "Chat")"><span class="fa fa-paper-plane mr-3"></span> Chat</a>
+                    </li>*@
+                    <li class="@Html.IsSelected(controller: "Invoice", action: "Index")">
+                        <a href="@Url.Action("Index", "Invoice")"><span class="fa fa-paper-plane mr-3" style="color:white;"></span> Invoice</a>
+                    </li>
+                    <li class="@Html.IsSelected(controller: "EnquiryForm", action: "Index")">
+                        <a href="@Url.Action("Index", "EnquiryForm")"><span class="fa fa-wpforms mr-3" style="color:white;"></span> Enquiry Form</a>
+                    </li>
+                    <li class="@Html.IsSelected(controller: "AdminSettings", action: "Index")">
+                        <a href="@Url.Action("Index", "AdminSettings")"><span class="fa fa-cogs mr-3" style="color:white;"></span> Admin Setting</a>
+                    </li>
+                </ul>
+                <div>
+                    @*@if (!string.IsNullOrEmpty(model.CRMClientId))
+                    {
+                        if (clientModel[0].isLMS == true)
+                        {
+                            LMSUrl = "http://" + LMSUrl + ":61705/Home";//Need to Change
+                            <p><a href="@LMSUrl" style="color:white;">Learning</a></p>
+                        }
+                    }*@
+                    <p>
+                        Copyright &copy;
+                        <script>document.write(new Date().getFullYear());</script><br /> All rights reserved
+                    </p>
+
+                </div>
+            </div>
+        </nav>
+
+        <div id="content" class="p-4 p-md-5 pt-5">
+            @RenderBody()
+        </div>
+    </div>
+    @*<script src="~/assets/CRM/jquery.min.js"></script>*@
+    <script src="~/assets/CRM/popper.js"></script>
+    <script src="~/assets/CRM/bootstrap.min.js"></script>
+    <script src="~/assets/CRM/main.js"></script>
+</body>
+</html>

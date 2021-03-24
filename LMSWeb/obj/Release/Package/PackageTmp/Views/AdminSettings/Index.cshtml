@@ -1,0 +1,152 @@
+﻿@model LMSWeb.ViewModel.TblUserViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutCRM.cshtml";
+}
+<style>
+    body, html {
+        height: 100%;
+        margin: 0;
+        font-family: Arial;
+    }
+
+    /* Style tab links */
+    .tablink {
+        background-color: darkblue;
+        color: white;
+        float: left;
+        border: solid white;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        font-size: 17px;
+        width: 25%;
+    }
+
+        .tablink:hover {
+            background-color: darkblue;
+            color: black;
+        }
+
+    /* Style the tab content (and add height:100% for full page content) */
+    .tabcontent {
+        color: black;
+        display: none;
+        padding: 50px 20px;
+        height: 100%;
+    }
+
+    #Home {
+        background-color: red;
+    }
+
+    #dvmanageuser {
+        background-color: white;
+    }
+
+    #dvprofile {
+        background-color: white;
+    }
+
+    #dvUpdateStages {
+        background-color: white;
+    }
+</style>
+@using (Html.BeginForm("UpdateUser", "AdminSettings", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmupdateUser", @class = "multisteps-form__form" }))
+{
+    @Html.HiddenFor(model => model.imageJson)
+    @Html.HiddenFor(model => model.imageName)
+    <div class="row justify-content-center">
+        <button type="button" class="tablink" onclick="openPage('dvprofile', this,'orange')" id="defaultOpen">profile</button>
+        <button type="button" class="tablink" onclick="openPage('dvmanageuser', this,'orange')">Manage User</button>
+        <button type="button" class="tablink" onclick="openPage('dvUpdateStages', this,'orange')">Update Stages</button>
+    </div>
+    <div id="dvmanageuser" class="tabcontent">
+        @Html.Partial("~/Views/AdminSettings/_ManageUser.cshtml", Model)
+    </div>
+
+    <div id="dvUpdateStages" class="tabcontent">
+        @*@Html.Partial("~/Views/AdminSettings/_UpdateStages.cshtml",Model)*@
+    </div>
+
+    <div id="dvprofile" class="tabcontent">
+        @Html.Partial("~/Views/AdminSettings/_UserProfile.cshtml", Model)
+
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        document.getElementById("fileNew").addEventListener('change', handleFileSelect, false);
+        $('#btnUsersubmit').on("click", function () {
+            UpdateToDB();
+        });
+        $('#btnProfilePic').on("click", function () {
+            $('#file').click();
+        });
+
+    });
+    function UpdateToDB() {
+        var data = $('#frmupdateUser').serialize();
+        console.log(data);
+        $.ajax({
+            url: $('#frmupdateUser').attr('action'),
+            type: 'post',
+            dataType: "html",
+            data: data,
+            success: function (data) {
+                console.log(data)
+                if (data == "True") {
+                    toastr.success("User Updated");
+                   
+                }
+                else {
+                    toastr.error('error occured while updateing data');
+                }
+            }
+        });
+    }
+     function handleFileSelect(evt) {
+        
+        var f = evt.target.files[0]; // FileList object
+        var reader = new FileReader();
+        // Closure to capture the file information.
+        reader.onload = (function (theFile) {
+            return function (e) {                
+                var binaryData = e.target.result;
+                var base64String = window.btoa(binaryData);
+                $("#imageJson").val(base64String);
+                $("#imageName").val($("#fileNew")[0].files[0].name);
+                console.log($("#imageName").val());
+            };
+        })(f);
+        // Read in the image file as a data URL.
+        reader.readAsBinaryString(f);
+       
+    }
+    function openPage(pageName, elmnt, color) {
+        // Hide all elements with class="tabcontent" by default */
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        //console.log(tabcontent);
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+            // console.log('inside');
+        }
+        //  Remove the background color of all tablinks/buttons
+        tablinks = document.getElementsByClassName("tablink");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].style.backgroundColor = "";
+        }
+
+        //  Show the specific tab content
+        document.getElementById(pageName).style.display = "block";
+
+        //  Add the specific color to the button used to open the tab content
+        elmnt.style.backgroundColor = color;
+    }
+        
+    document.getElementById("defaultOpen").click();
+</script>
+
+
+

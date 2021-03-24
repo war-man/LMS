@@ -1,0 +1,96 @@
+﻿
+
+@model LMSWeb.ViewModel.CRMDashboardViewModel
+
+<div class="container-fluid list-box">
+    <div class="pt-3 pl-3 pr-3 course-list-container">
+
+        <div class="row">
+            <div class="col search-container">
+                <h5>Clients</h5>
+            </div>
+        </div>
+        <div class="row mt-3" id="dvClientData">
+            <div class="table-responsive">
+                <table class="table" style="border-bottom:0px !important;" id="clientsTable">
+                    <thead>
+                        <tr>
+                            <th scope="col">User Name</th>
+                            <th scope="col">Updated Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            if (Model.objCRMClientList != null)
+                            {
+                                if (Model.objCRMClientList.Count > 0)
+                                {
+
+                                    foreach (var user in Model.objCRMClientList)
+                                    {
+                                        LMSWeb.App_Start.CommonFunctions common = new LMSWeb.App_Start.CommonFunctions();
+                                        string userId = common.EncryptString(Convert.ToString(user.Id));
+                                        <tr>
+                                            <td>
+                                                <a href="@Url.Action("AddEnquiry", "CRMUsers", new { myid = userId })" class="login" title="Edit">@user.FirstName @user.LastName</a>
+
+                                            </td>
+                                            <td>@user.CreatedOn</td>
+                                        </tr>
+                                    }
+                                    <tr><td colspan="2" style="text-align:end;"><a href="@Url.Action("Clients", "CRMUsers")" class="login" title="View All">View All</a></td></tr>
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="2" align="center">No Potential Client Available</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="2" align="center">No Potential Client Available</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="2" align="center">No Potential Client Available</td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+
+        $('#clientsTable').DataTable({
+            "aaSorting": [[1, "desc"]],
+            "paging": false,
+            "ordering": false,
+            "info": false,
+            "bFilter": true,
+            //"pageLength": 10,
+            //"pagingType": "simple_numbers",
+            aoColumnDefs: [
+                {
+                    bSortable: false,
+                    aTargets: [-1, -2]
+                }
+            ]
+        });
+
+        $('#clientsTable_filter').hide();
+    });
+</script>

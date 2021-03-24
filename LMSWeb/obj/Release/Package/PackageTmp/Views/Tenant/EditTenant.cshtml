@@ -1,0 +1,146 @@
+﻿@model LMSBL.DBModels.TblTenant
+@{
+    ViewBag.Title = "Edit Client";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+
+
+@using (Html.BeginForm("AddTenant", "Tenant", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid mt-4 mb-4 pl-4 pr-4">
+        @if (!string.IsNullOrEmpty(Convert.ToString(TempData["Message"])))
+        {
+            <script>
+                swal.fire("Course Saved Successfully")
+                    .then((value) => {
+                        window.location.href = "Index";
+                    });
+            </script>
+
+        }
+        <div class="row justify-content-center h-100">
+            <div class="col align-self-center add-user-section ">
+                <div class="col">
+                    <h4 class="mt-3 ml-2 mb-3">Edit Client</h4>
+
+                </div>
+                <div class="row pt-5 pl-4">
+
+                    <div class="col-sm-6">
+                        @Html.HiddenFor(model => model.TenantId)
+                        @Html.TextBoxFor(model => model.TenantName, new { @class = "input100", @readonly = "readonly", placeholder = "ClientName" })
+                        @Html.TextBoxFor(model => model.TenantDomain, new { @class = "input100", @readonly = "readonly", placeholder = "ClientDomain" })
+                        @Html.TextBoxFor(model => model.ActivationFrom, "{0:MM/dd/yyyy}", new { @class = "input100", @id = "DtActivitionFrom", @autocomplete = "off", placeholder = "ActivationFrom" })
+                        @Html.TextBoxFor(model => model.ActivationTo, "{0:MM/dd/yyyy}", new { @class = "input100", @id = "DtActivitionTo", @autocomplete = "off", placeholder = "ActivationTo" })
+                        @Html.TextBoxFor(model => model.NoOfUserAllowed, new { @class = "input100", placeholder = "NoOfUserAllowed" })
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div>
+
+                            <input type="button" id="btnTenantDomainName" value="verify" class="btn btn-primary profle-submit-btn mr-4" />
+                            <label id="lblerrorDomain" style="display:none;margin-left:263px;"></label>
+                        </div>
+                        <div>
+                            @Html.LabelFor(model => model.Logo, new { @class = "" })
+                        </div>
+                        <div>
+                            <input type="file" name="file" id="file" style="width: 100%;" onchange="show(this)" />
+                            <div>
+                                <small>(File should not exceed 1 MB)</small>
+                            </div>
+                            
+                            <div> <img id="user_img" height="100" width="200" src="@Model.Logo" /> </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-sm-6">
+                        
+                        
+                            <button type="submit" id="btnTenantSubmit" class="btn btn-primary profle-submit-btn mr-4"><b>Submit</b></button>
+                            <button type="submit" onclick="location.href='@Url.Action("Index", "Tenant")';return false;"
+                                    class="btn btn-outline-primary cancel-btn">
+                                <b>Cancel</b>
+                            </button>
+
+                        
+                    </div>
+
+                </div>
+            </div>
+    </div>
+        </div>
+
+}
+
+<script src="~/assets/Validations.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        console.log('Ready..!');
+
+        $('#DtActivitionFrom').datepicker({
+            format: 'mm/dd/yyyy',
+            showWeek: true,
+            startDate: new Date()
+        });
+
+        $('#DtActivitionTo').datepicker({
+            format: 'mm/dd/yyyy',
+            showWeek: true,
+            startDate: new Date()
+        });
+
+
+        $("#txtdomainName").keypress(function () {
+            $("#lblerrorDomain").hide()
+        });
+
+        $("#btnTenantDomainName").click(function () {
+            if ($('#TenantDomain').val() == "") {
+                alert("Please enter Client Domain");
+                return false;
+            }
+            else {
+                VerifyTenantDomain($('#TenantDomain').val());
+            }
+        })
+
+
+    });
+    function show(input) {
+        if (input.files && input.files[0]) {
+            var filerdr = new FileReader();
+            filerdr.onload = function (e) {
+                $('#user_img').attr('src', e.target.result);
+            }
+            filerdr.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function VerifyTenantDomain(DominName) {
+        $.ajax({
+            url: "/Tenant/VerifyTenantDomain?Domain=" + DominName,
+            type: "GET",
+            contentType: "application/json;charset=UTF-8",
+            dataType: "json",
+            success: function (result) {
+                console.log(result)
+                if (result == 1) {
+                    $("#lblerrorDomain").text("Domain Name is not Available !!!");
+                    $("#lblerrorDomain").css("color", "Red");
+                }
+                else {
+                    $("#lblerrorDomain").text("Domain Name is Available !!!");
+                    $("#lblerrorDomain").css("color", "Green");
+                }
+                $("#lblerrorDomain").show();
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    }
+</script>

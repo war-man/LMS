@@ -1,0 +1,30 @@
+﻿@model LMSWeb.ViewModel.CRMDashboardViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutCRM.cshtml";
+}
+
+
+<div class="row p-4">
+    <div class="col-6" data-animation="scaleIn">
+        @Html.Partial("~/Views/CRM/_EnquiryList.cshtml", Model)
+    </div>
+    <div class="col-6" data-animation="scaleIn">
+        @Html.Partial("~/Views/CRM/_PotentialClientsList.cshtml", Model)
+    </div>
+</div>
+<div class="row p-4">
+    <div class="col-6" data-animation="scaleIn">
+        @Html.Partial("~/Views/CRM/_Clients.cshtml", Model)
+    </div>
+    <div class="col-6" data-animation="scaleIn">
+        @*@Html.Partial("~/Views/CRM/_DocumentUsers.cshtml", Model)*@
+    </div>
+</div>
+<div class="row p-4">
+    <div class="col-6" data-animation="scaleIn">
+        @*@Html.Partial("~/Views/CRM/_DocumentUsers.cshtml", Model)*@
+    </div>
+
+
+</div>

@@ -1,0 +1,99 @@
+{
+    "config":{
+        "scormType": 1.2
+    },
+    "quiz":{
+        "title":"Quiz",
+        "nameLabel":"Name:",
+        "name":"Listening Quiz",
+        "descLabel":"Description:",
+        "description":"Watch and listen the video and audio. Answer the questions.",
+        "timeLabel":"Time remaining: ",
+        "duration":10,
+        "passingScore":80,
+        "minScore":0,
+        "maxScore":100,
+        "multipleAttempts":true,
+        "timeoutMessage":"Exam time ended."
+    },
+    "reviewQuiz":{
+        "title":"Review Quiz",
+        "nameLabel":"Name:",
+        "name":"Listening Quiz",
+        "descLabel":"Description:",
+        "description":"Watch and listen the video and audio. Answer the questions.",
+        "scoreLabel":"Score:"
+    },
+    "questions":[
+        {
+            "type":"video",
+            "questionText":"Watch the video and answer the questions 2-4",
+            "path":"data/media/mov_bbb.mp4"
+        },
+        {
+            "type":"mcq",
+            "questionText":"What is this video based on?",
+            "instructionText":"Options",
+            "randomOptions":true,
+            "answer":[1,0,0],
+            "points":1,
+            "options":[
+                {
+                    "text":"Option 1",
+                    "feedback":"Option 1 feedback"
+                },
+                {
+                    "text":"Option 2",
+                    "feedback":"Option 2 feedback"
+                },
+                {
+                    "text":"Option 3",
+                    "feedback":"Option 3 feedback"
+                }
+            ]
+        },
+        {
+            "type":"audio",
+            "questionText":"Listen this audio and answer the questions 6-8",
+            "path":"data/media/horse.ogv"
+        },
+        {
+            "type":"mrq",
+            "questionText":"This video explains about?",
+            "instructionText":"Options",
+            "randomOptions":true,
+            "answer":[1,1,0],
+            "points":1,
+            "options":[
+                {
+                    "text":"Option 1"
+                },
+                {
+                    "text":"Option 2"
+                },
+                {
+                    "text":"Option 3"
+                }
+            ],
+            "correctFeedback":{
+                "text":"Correct feedback"
+            },
+            "incorrectFeedback":{
+                "text":"Incorrect Feedback"
+            }
+        },
+        {
+            "type":"para",
+            "questionText":"Write 100 words about this audio",
+            "placeholderText":"Write your answer here",
+            "answer":"",
+            "points":1,
+            "correctFeedback":{
+                "text":"Correct feedback"
+            },
+            "incorrectFeedback":{
+                "text":"Incorrect Feedback"
+            }
+        }
+    ]
+}
